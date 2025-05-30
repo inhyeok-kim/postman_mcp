@@ -45,6 +45,7 @@ export default function ToolSetup(server : FastMCP, postmanAPI : ReturnType<type
 		description : "uid에 해당하는 collection에 새로운 request(API)를 추가합니다.",
 		parameters : z.object({
 			uid : z.string().describe("추가할 collection의 uid입니다."),
+			folderId : z.string().optional().describe("추가할 folder의 id입니다. 값이 있으면, collection의 해당 folder안에 request가 생성됩니다."),
 			name: z.string(),                          // 예: "POST request"
 			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
 			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
@@ -61,7 +62,7 @@ export default function ToolSetup(server : FastMCP, postmanAPI : ReturnType<type
 			// queryParams: z.string()
 		}),
 		execute : async (args,context) => {
-			const result = await postmanAPI.create_item(args.uid,args).then(response => {
+			const result = await postmanAPI.create_item(args.uid,args,args.folderId).then(response => {
 				return response.status;
 			}).catch((e : AxiosError)=>{
 				return e.message;
