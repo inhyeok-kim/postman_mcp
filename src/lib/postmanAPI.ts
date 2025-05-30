@@ -1,5 +1,5 @@
 import axios from "axios";
-import {PostmanRequest} from "./PostmanSchems.js";
+import {PostmanRequest} from "./PostmanSchemas.js";
 
 export function createAPIClient(apikey : string){
 	const client = createAxiosInstance(apikey);
@@ -8,25 +8,25 @@ export function createAPIClient(apikey : string){
 		getApiKey : ()=>{
 			return client.defaults.headers;
 		},
-		get_all_workspaces : () => {
+		getAllWorkspaces: () => {
 			return client.get("/workspaces");
 		},
-		get_workspace : (id : string) => {
+		getWorkspace: (id: string) => {
 			return client.get(`/workspaces/${id}`);
 		},
-		get_all_collections : () => {
+		getAllCollections: () => {
 			return client.get("/collections");
 		},
-		get_collection : (uid : string) => {
+		getCollection: (uid: string) => {
 			return client.get(`/collections/${uid}?model=minimal`);
 		},
-		create_item : (collectionUId : string, data : PostmanRequest, folderId? : string) => {
-			return client.post(`/collections/${collectionUId}/requests`+(folderId ? "$folder="+folderId : ""),data);
+		createItem: (collectionUId: string, data: PostmanRequest, folderId?: string) => {
+			return client.post(`/collections/${collectionUId}/requests` + (folderId ? "$folder=" + folderId : ""), data);
 		},
-		get_folder : (collectionId : string, folderId : string)=>{
+		getFolder: (collectionId: string, folderId: string) => {
 			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true`);
 		},
-		get_request : (collectionId : string, requestId : string)=>{
+		getRequest: (collectionId: string, requestId: string) => {
 			return client.get(`/collections/${collectionId}/requests/${requestId}`);
 		}
 	}

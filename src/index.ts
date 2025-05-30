@@ -1,27 +1,43 @@
 #!/usr/bin/env node
 
 import { FastMCP } from "fastmcp";
-import {createAPIClient} from "./lib/postmanAPI.js";
+import { createAPIClient } from "./lib/postmanAPI.js";
 import ToolSetup from "./lib/ToolSetup.js";
 
-try {
-	const server = new FastMCP({
-		name: "My Server",
-		version: "1.0.0",
-	});
-	const postmanAPI = createAPIClient(process.env.API_KEY!);
+/**
+ * Main application entry point
+ */
+function main() {
+	try {
+		// Check for API key
+		const apiKey = process.env.API_KEY;
+		if (!apiKey) {
+			throw new Error("API_KEY environment variable is required");
+		}
 
-	ToolSetup(server, postmanAPI);
+		// Create server instance
+		const server = new FastMCP({
+			name: "Postman MCP",
+			version: "1.0.0",
+		});
 
-	// server.start({
-	// 	transportType: "httpStream",
-	// 	httpStream : {
-	// 		port : 8080
-	// 	}
-	// });
-	server.start({
-		transportType : "stdio"
-	})
-} catch (e) {
-	console.error(e);
+		// Create API client
+		const postmanAPI = createAPIClient(apiKey);
+
+		// Setup tools
+		ToolSetup(server, postmanAPI);
+
+		// Start server
+		server.start({
+			transportType: "stdio"
+		});
+
+		console.log("Server started successfully");
+	} catch (error) {
+		console.error("Server initialization failed:", error instanceof Error ? error.message : String(error));
+		process.exit(1);
+	}
 }
+
+// Run the application
+main();
