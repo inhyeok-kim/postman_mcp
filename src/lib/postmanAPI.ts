@@ -20,8 +20,8 @@ export function createAPIClient(apikey : string){
 		get_collection : (uid : string) => {
 			return client.get(`/collections/${uid}?model=minimal`);
 		},
-		create_item : (collectionUId : string, data : PostmanRequest) => {
-			return client.post(`/collections/${collectionUId}/requests`,data);
+		create_item : (collectionUId : string, data : PostmanRequest, folderId? : string) => {
+			return client.post(`/collections/${collectionUId}/requests`+(folderId ? "$folder="+folderId : ""),data);
 		},
 		get_folder : (collectionId : string, folderId : string)=>{
 			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true`);
