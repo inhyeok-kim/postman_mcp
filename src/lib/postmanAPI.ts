@@ -23,6 +23,9 @@ export function createAPIClient(apikey : string){
 		createItem: (collectionUId: string, data: PostmanRequest, folderId?: string) => {
 			return client.post(`/collections/${collectionUId}/requests` + (folderId ? "?folder=" + folderId : ""), data);
 		},
+		updateItem: (collectionId: string, data: PostmanRequest, requestId: string) => {
+			return client.put(`/collections/${collectionId}/requests/${requestId}`, data);
+		},
 		getFolder: (collectionId: string, folderId: string) => {
 			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true`);
 		},

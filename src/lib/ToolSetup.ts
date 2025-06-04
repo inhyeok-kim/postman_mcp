@@ -104,14 +104,19 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 
 	server.addTool({
 		name : "get_collection",
-		description : "uid에 해당하는 collection의 정보를 조회합니다. collection의 이름, uid, description이 있습니다",
+		description : "uid에 해당하는 collection의 정보를 조회합니다. collection의 이름, id, uid, description이 있습니다. items는 컬렉션의 최상위 folder와 request 목록입니다.",
 		parameters: z.object({
 			collectionUid: z.string().describe("Collection UID")
 		}),
 		execute: async (args, context) => {
 			try {
 				const response = await postmanAPI.getCollection(args.collectionUid);
-				return JSON.stringify(response.data.collection.info);
+				const data = {
+					...response.data.collection.info,
+					id : response.data.collection.info_postman_id,
+					items: response.data.collection.item.map((i: any) => Utils.convertItem(i))
+				}
+				return JSON.stringify(data);
 			} catch (error) {
 				return JSON.stringify(handleApiError(error as AxiosError));
 			}
@@ -217,5 +222,35 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 			})
 			return JSON.stringify(result);
 		}
-	})
+	});
+
+	server.addTool({
+		name : "update_request",
+		description : "id에 해당하는 collection에 있는 request(API)를 수정합니다.",
+		parameters: z.object({
+			collectionId: z.string().describe("수정할 collection의 id입니다."),
+			requestId : z.string().describe("수정할 request의 id입니다."),
+			name: z.string(),                          // 예: "POST request"
+			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
+			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
+			dataOptions: z.object({                    // dataOptions.raw.language
+				raw: z.object({
+					language: z.enum(["json"]).default("json"),
+				}),
+			}).nullable().optional(),
+			rawModeData: z.string().describe("body에 들어갈 json 문자열입니다.").nullable().optional(),                   // JSON 문자열 그대로
+			description: z.string().nullable().optional(),
+			headers: z.string().nullable().optional(),
+			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).nullable().optional(),                        // 예: "POST"
+			url: z.string().describe("API의 URL입니다. path variable은 앞에 :을 붙여주세요. query params는 ?뒤에 적어주세요."),
+		}),
+		execute: async (args, context) => {
+			try {
+				const response = await postmanAPI.updateItem(args.collectionId, args, args.requestId);
+				return JSON.stringify(response.status);
+			} catch (error) {
+				return JSON.stringify(handleApiError(error as AxiosError));
+			}
+		}
+	});
 }
