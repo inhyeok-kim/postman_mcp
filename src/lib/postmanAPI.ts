@@ -18,10 +18,10 @@ export function createAPIClient(apikey : string){
 			return client.get("/collections");
 		},
 		getCollection: (uid: string) => {
-			return client.get(`/collections/${uid}?model=minimal`);
+			return client.get(`/collections/${uid}`);
 		},
 		createItem: (collectionUId: string, data: PostmanRequest, folderId?: string) => {
-			return client.post(`/collections/${collectionUId}/requests` + (folderId ? "$folder=" + folderId : ""), data);
+			return client.post(`/collections/${collectionUId}/requests` + (folderId ? "?folder=" + folderId : ""), data);
 		},
 		getFolder: (collectionId: string, folderId: string) => {
 			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true`);
