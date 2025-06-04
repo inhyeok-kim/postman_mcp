@@ -74,7 +74,7 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 			description: z.string().nullable().optional(),
 			headers: z.string().nullable().optional(),
 			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).nullable().optional(),                        // 예: "POST"
-			url: z.string().describe("API의 URL입니다. path variable은 앞에 :을 붙여주세요. query params는 & 뒤에 적어주세요."),
+			url: z.string().describe("API의 URL입니다. path variable은 앞에 :을 붙여주세요. query params는 ?뒤에 적어주세요."),
 		}),
 		execute: async (args, context) => {
 			try {
