@@ -27,10 +27,10 @@ export function createAPIClient(apikey : string){
 			return client.put(`/collections/${collectionId}/requests/${requestId}`, data);
 		},
 		getFolder: (collectionId: string, folderId: string) => {
-			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true`);
+			return client.get(`/collections/${collectionId}/folders/${folderId}?populate=true&uid=true`);
 		},
 		getRequest: (collectionId: string, requestId: string) => {
-			return client.get(`/collections/${collectionId}/requests/${requestId}`);
+			return client.get(`/collections/${collectionId}/requests/${requestId}?uid=true`);
 		}
 	}
 }

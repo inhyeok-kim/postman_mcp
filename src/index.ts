@@ -32,9 +32,9 @@ function main() {
 			transportType: "stdio"
 		});
 
-		console.log("Server started successfully");
+		// console.log("Server started successfully");
 	} catch (error) {
-		console.error("Server initialization failed:", error instanceof Error ? error.message : String(error));
+		// console.error("Server initialization failed:", error instanceof Error ? error.message : String(error));
 		process.exit(1);
 	}
 }

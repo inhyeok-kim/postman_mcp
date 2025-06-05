@@ -60,8 +60,8 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		name : "create_new_request",
 		description : "uid에 해당하는 collection에 새로운 request(API)를 추가합니다. collection에 있는 folder의 id를 넣으면 해당 folder에 새로운 request를 추가할 수도 있습니다.",
 		parameters: z.object({
-			collectionUid: z.string().describe("추가할 collection의 uid입니다."),
-			folderId : z.string().optional().describe("추가할 folder의 id입니다. 값이 있으면, collection의 해당 folder안에 request가 생성됩니다."),
+			collectionUid: z.string().describe("추가할 collection의 id입니다."),
+			folderUid : z.string().optional().describe("추가할 folder의 uid입니다. 값이 있으면, collection의 해당 folder안에 request가 생성됩니다."),
 			name: z.string(),                          // 예: "POST request"
 			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
 			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
@@ -78,7 +78,7 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		}),
 		execute: async (args, context) => {
 			try {
-				const response = await postmanAPI.createItem(args.collectionUid, args, args.folderId);
+				const response = await postmanAPI.createItem(args.collectionUid, args, args.folderUid);
 				return JSON.stringify(response.status);
 			} catch (error) {
 				return JSON.stringify(handleApiError(error as AxiosError));
@@ -151,31 +151,32 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		name : "get_folder",
 		description : "collection에 있는 folder 정보를 조회합니다. folder의 id,uid, name, description, 상위 folder 등이 있습니다. requests에는 하위 request들의 목록이 있습니다. folders에는 하위 folder들의 목록이 있습니다.",
 		parameters: z.object({
-			collectionUid : z.string().describe("조회할 folder가 존재하는 collection의 uid 입니다."),
+			collectionId : z.string().describe("조회할 folder가 존재하는 collection의 id 입니다."),
 			folderUid : z.string().describe("조회할 folder의 uid입니다.")
 		}),
 		execute: async (args, context) => {
 			try {
-				const response = await postmanAPI.getFolder(args.collectionUid, args.folderUid);
+				const response = await postmanAPI.getFolder(args.collectionId, args.folderUid);
 				const data = response.data.data;
 
 				const folder = {
 					collection: data.collection,
 					folder: data.folder,
-					id: data.id,
+					id : response.data.model_id,
+					uid: data.id,
 					name: data.name,
 					description: data.description,
 					folders: data.folders.map((f: any) => ({
-						collection: f.collection,
-						folder: f.folder,
-						id: f.id,
+						collectionUid: f.collection,
+						folderUid: f.folder,
+						uid: f.id,
 						name: f.name,
 						description: f.description,
 					})),
 					requests: data.requests.map((r: any) => ({
-						folder: r.folder,
-						collection: r.collection,
-						id: r.id,
+						folderUid: r.folder,
+						collectionUid: r.collection,
+						uid: r.id,
 						name: r.name,
 						description: r.description,
 						method: r.method,
@@ -194,16 +195,17 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		name : "get_request",
 		description : "collection에 있는 uid에 해당하는 request(API) 정보를 조회합니다. reqeust의 id, name, description, folder, url, data, method, params 등이 있습니다.",
 		parameters : z.object({
-			collectionUid : z.string().describe("조회할 request(API)가 존재하는 collection의 uid 입니다."),
-			requestId : z.string().describe("조회할 reqeust(API)의 id입니다.")
+			collectionId : z.string().describe("조회할 request(API)가 존재하는 collection의 id 입니다."),
+			requestUid : z.string().describe("조회할 reqeust(API)의 uid입니다.")
 		}),
 		execute : async (args,context) => {
-			const result = await postmanAPI.getRequest(args.collectionUid,args.requestId).then(response => {
+			const result = await postmanAPI.getRequest(args.collectionId,args.requestUid).then(response => {
 				const data = response.data.data;
 				const reqeust = {
 					collection : data.collection,
 					folder : data.folder,
-					id : data.id,
+					uid : data.id,
+					id : response.data.model_id,
 					name : data.name,
 					description : data.description,
 					dataMode : data.dataMode,
@@ -229,7 +231,7 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		description : "id에 해당하는 collection에 있는 request(API)를 수정합니다.",
 		parameters: z.object({
 			collectionId: z.string().describe("수정할 collection의 id입니다."),
-			requestId : z.string().describe("수정할 request의 id입니다."),
+			requestUid : z.string().describe("수정할 request의 uid입니다."),
 			name: z.string(),                          // 예: "POST request"
 			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
 			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
@@ -246,7 +248,7 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 		}),
 		execute: async (args, context) => {
 			try {
-				const response = await postmanAPI.updateItem(args.collectionId, args, args.requestId);
+				const response = await postmanAPI.updateItem(args.collectionId, args, args.requestUid);
 				return JSON.stringify(response.status);
 			} catch (error) {
 				return JSON.stringify(handleApiError(error as AxiosError));
