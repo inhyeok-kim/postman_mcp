@@ -2,7 +2,6 @@ import { AxiosError } from "axios";
 import { z } from "zod";
 import { FastMCP } from "fastmcp";
 import { createAPIClient } from "./postmanAPI.js";
-import { HttpMethodEnum } from "./PostmanSchemas.js";
 import Utils from "./Utils.js";
 
 /**
@@ -63,17 +62,17 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 			collectionUid: z.string().describe("추가할 collection의 id입니다."),
 			folderUid : z.string().optional().describe("추가할 folder의 uid입니다. 값이 있으면, collection의 해당 folder안에 request가 생성됩니다."),
 			name: z.string(),                          // 예: "POST request"
-			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
+			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").optional(),                      // 예: "raw"
 			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
 			dataOptions: z.object({                    // dataOptions.raw.language
 				raw: z.object({
 					language: z.enum(["json"]).default("json"),
 				}),
-			}).nullable().optional(),
-			rawModeData: z.string().describe("body에 들어갈 json 문자열입니다.").nullable().optional(),                   // JSON 문자열 그대로
-			description: z.string().nullable().optional(),
-			headers: z.string().nullable().optional(),
-			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).nullable().optional(),                        // 예: "POST"
+			}).optional(),
+			rawModeData: z.string().describe("body에 들어갈 json 문자열입니다.").optional(),                   // JSON 문자열 그대로
+			description: z.string().optional(),
+			headers: z.string().optional(),
+			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).optional(),                        // 예: "POST"
 			url: z.string().describe("API의 URL입니다. path variable은 앞에 :을 붙여주세요. query params는 ?뒤에 적어주세요."),
 		}),
 		execute: async (args, context) => {
@@ -233,17 +232,17 @@ export default function ToolSetup(server: FastMCP, postmanAPI: ReturnType<typeof
 			collectionId: z.string().describe("수정할 collection의 id입니다."),
 			requestUid : z.string().describe("수정할 request의 uid입니다."),
 			name: z.string(),                          // 예: "POST request"
-			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").nullable().optional(),                      // 예: "raw"
+			dataMode: z.enum(["raw"]).default("raw").describe("body의 유형을 정합니다.").optional(),                      // 예: "raw"
 			// dataMode: z.enum(["raw", "formdata", "none", "urlencoded"]),                      // 예: "raw"
 			dataOptions: z.object({                    // dataOptions.raw.language
 				raw: z.object({
 					language: z.enum(["json"]).default("json"),
 				}),
-			}).nullable().optional(),
-			rawModeData: z.string().describe("body에 들어갈 json 문자열입니다.").nullable().optional(),                   // JSON 문자열 그대로
-			description: z.string().nullable().optional(),
-			headers: z.string().nullable().optional(),
-			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).nullable().optional(),                        // 예: "POST"
+			}).optional(),
+			rawModeData: z.string().describe("body에 들어갈 json 문자열입니다.").optional(),                   // JSON 문자열 그대로
+			description: z.string().optional(),
+			headers: z.string().optional(),
+			method: z.enum(["POST","GET","PUT","DELETE","PATCH","HEAD","OPTIONS"]).optional(),                        // 예: "POST"
 			url: z.string().describe("API의 URL입니다. path variable은 앞에 :을 붙여주세요. query params는 ?뒤에 적어주세요."),
 		}),
 		execute: async (args, context) => {
